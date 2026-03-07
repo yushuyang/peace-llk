@@ -1,0 +1,7 @@
+/**result.wxss**/
+.container { min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 40rpx; }
+.result-card { background: white; border-radius: 30rpx; padding: 60rpx; width: 100%; max-width: 600rpx; text-align: center; box-shadow: 0 20rpx 60rpx rgba(0, 0, 0, 0.2); }
+.result-title { font-size: 48rpx; font-weight: bold; color: #667eea; display: block; margin-bottom: 40rpx; }
+.result-score, .result-time { font-size: 32rpx; color: #666; display: block; margin-bottom: 20rpx; }
+.new-record { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 20rpx; border-radius: 20rpx; margin-bottom: 40rpx; }
+.btn { width: 100%; margin-bottom: 20rpx; }

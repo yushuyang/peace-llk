@@ -1,0 +1,23 @@
+<view class="container">
+  <view class="header">
+    <text class="title">太平年连连看</text>
+    <text class="subtitle">经典消除游戏</text>
+  </view>
+  <view class="menu-card">
+    <view class="best-score" wx:if="{{hasBestScore}}">
+      <text class="label">最高纪录</text>
+      <text class="value">{{bestScore}}分</text>
+    </view>
+    <button class="btn start-btn" bindtap="startGame">开始游戏</button>
+    <view class="difficulty-selector">
+      <text class="label">难度选择</text>
+      <view class="difficulty-options">
+        <view class="option {{easyActive}}" bindtap="setDifficulty" data-level="easy">简单</view>
+        <view class="option {{normalActive}}" bindtap="setDifficulty" data-level="normal">普通</view>
+        <view class="option {{hardActive}}" bindtap="setDifficulty" data-level="hard">困难</view>
+      </view>
+    </view>
+    <button class="btn btn-secondary help-btn" bindtap="showHelp">游戏说明</button>
+    <button class="btn btn-secondary characters-btn" bindtap="showCharacters">角色图鉴</button>
+  </view>
+</view>

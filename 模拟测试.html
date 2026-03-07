@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>太平年连连看 - 模拟测试</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        .device-frame {
+            width: 375px;
+            height: 667px;
+            background: #000;
+            border-radius: 40px;
+            padding: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            position: relative;
+        }
+        .screen {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 30px;
+            overflow: hidden;
+            position: relative;
+        }
+        .status-bar {
+            height: 44px;
+            background: rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            color: white;
+            font-size: 14px;
+        }
+        .nav-bar {
+            height: 44px;
+            background: rgba(255,255,255,0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 17px;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 1px solid #eee;
+        }
+        .content {
+            height: calc(100% - 88px);
+            overflow-y: auto;
+            position: relative;
+        }
+        /* 首页样式 */
+        .home-page {
+            padding: 40px 20px;
+            text-align: center;
+        }
+        .home-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            margin-bottom: 10px;
+        }
+        .home-subtitle {
+            font-size: 14px;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 40px;
+        }
+        .best-score {
+            background: rgba(255,255,255,0.9);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .best-score-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .best-score-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 15px 60px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px 0;
+            width: 100%;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .btn:active {
+            transform: scale(0.98);
+        }
+        .btn-secondary {
+            background: rgba(255,255,255,0.2);
+            box-shadow: none;
+        }
+        .difficulty-selector {
+            margin: 20px 0;
+        }
+        .difficulty-label {
+            color: white;
+            font-size: 14px;
+            margin-bottom: 10px;
+            display: block;
+        }
+        .difficulty-options {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        .difficulty-btn {
+            padding: 8px 20px;
+            border-radius: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            background: transparent;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .difficulty-btn.active {
+            background: white;
+            color: #667eea;
+            border-color: white;
+        }
+        /* 游戏页面样式 */
+        .game-page {
+            display: none;
+            padding: 10px;
+        }
+        .game-header {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(255,255,255,0.9);
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .game-stat {
+            text-align: center;
+        }
+        .game-stat-label {
+            font-size: 11px;
+            color: #666;
+        }
+        .game-stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .game-board {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .grid {
+            display: grid;
+            gap: 5px;
+            justify-content: center;
+        }
+        .grid-4 { grid-template-columns: repeat(4, 65px); }
+        .grid-6 { grid-template-columns: repeat(6, 42px); }
+        .cell {
+            aspect-ratio: 1;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+            overflow: hidden;
+        }
+        .cell:hover {
+            transform: scale(1.05);
+        }
+        .cell.selected {
+            border-color: #ffd700;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+        .cell.matched {
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.3s;
+        }
+        .cell img {
+            width: 90%;
+            height: 90%;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+        .game-controls {
+            display: flex;
+            justify-content: space-around;
+        }
+        .control-btn {
+            background: rgba(255,255,255,0.9);
+            border: none;
+            border-radius: 20px;
+            padding: 10px 20px;
+            font-size: 13px;
+            color: #667eea;
+            cursor: pointer;
+        }
+        /* 角色图鉴 */
+        .characters-page {
+            display: none;
+            padding: 10px;
+        }
+        .page-title {
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .character-list {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        .character-card {
+            background: white;
+            border-radius: 10px;
+            padding: 8px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .character-card img {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 5px;
+        }
+        .character-name {
+            font-size: 12px;
+            font-weight: bold;
+            color: #333;
+        }
+        .character-title {
+            font-size: 10px;
+            color: #DC143C;
+        }
+        /* 弹窗 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            width: 80%;
+            max-width: 300px;
+            text-align: center;
+        }
+        .modal-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        .modal-text {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        /* 测试面板 */
+        .test-panel {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            max-width: 250px;
+        }
+        .test-panel h4 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .test-item {
+            font-size: 12px;
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .test-pass { color: #4CAF50; }
+        .test-fail { color: #f44336; }
+        .test-warn { color: #FF9800; }
+        .back-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.3);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="device-frame">
+        <div class="screen">
+            <div class="status-bar">
+                <span>9:41</span>
+                <span>📶 5G 🔋</span>
+            </div>
+            <div class="nav-bar">太平年连连看</div>
+            <div class="content">
+                <!-- 首页 -->
+                <div class="home-page" id="homePage">
+                    <div class="home-title">太平年连连看</div>
+                    <div class="home-subtitle">经典消除游戏</div>
+                    
+                    <div class="best-score">
+                        <div class="best-score-label">最高纪录</div>
+                        <div class="best-score-value" id="bestScore">0分</div>
+                    </div>
+                    
+                    <button class="btn" onclick="startGame()">开始游戏</button>
+                    
+                    <div class="difficulty-selector">
+                        <span class="difficulty-label">难度选择</span>
+                        <div class="difficulty-options">
+                            <button class="difficulty-btn" data-level="easy" onclick="setDifficulty('easy')">简单</button>
+                            <button class="difficulty-btn active" data-level="normal" onclick="setDifficulty('normal')">普通</button>
+                            <button class="difficulty-btn" data-level="hard" onclick="setDifficulty('hard')">困难</button>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-secondary" onclick="showHelp()">游戏说明</button>
+                    <button class="btn btn-secondary" onclick="showCharacters()">角色图鉴</button>
+                </div>
+                
+                <!-- 游戏页面 -->
+                <div class="game-page" id="gamePage">
+                    <button class="back-btn" onclick="goHome()">←</button>
+                    <div class="game-header">
+                        <div class="game-stat">
+                            <div class="game-stat-label">时间</div>
+                            <div class="game-stat-value" id="timeLeft">60</div>
+                        </div>
+                        <div class="game-stat">
+                            <div class="game-stat-label">得分</div>
+                            <div class="game-stat-value" id="score">0</div>
+                        </div>
+                        <div class="game-stat">
+                            <div class="game-stat-label">剩余</div>
+                            <div class="game-stat-value" id="pairs">8</div>
+                        </div>
+                    </div>
+                    <div class="game-board">
+                        <div class="grid" id="gameGrid"></div>
+                    </div>
+                    <div class="game-controls">
+                        <button class="control-btn" onclick="useHint()">提示 (3)</button>
+                        <button class="control-btn" onclick="shuffle()">重排 (3)</button>
+                        <button class="control-btn" onclick="pauseGame()">暂停</button>
+                    </div>
+                </div>
+                
+                <!-- 角色图鉴 -->
+                <div class="characters-page" id="charactersPage">
+                    <button class="back-btn" onclick="goHome()">←</button>
+                    <div class="page-title">《太平年》角色图鉴</div>
+                    <div class="character-list" id="characterList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 测试面板 -->
+    <div class="test-panel">
+        <h4>🧪 自动化测试</h4>
+        <div id="testResults">
+            <div class="test-item">正在测试...</div>
+        </div>
+        <button class="btn" style="margin-top: 10px; padding: 8px; font-size: 12px;" onclick="runTests()">重新测试</button>
+    </div>
+    
+    <!-- 弹窗 -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-title" id="modalTitle">提示</div>
+            <div class="modal-text" id="modalText">内容</div>
+            <button class="btn" onclick="closeModal()">确定</button>
+        </div>
+    </div>
+
+<script>
+// 角色数据
+const characters = [
+    { id: 1, name: '钱弘俶', actor: '白宇', title: '吴越君主', image: 'images/char01.png' },
+    { id: 2, name: '赵匡胤', actor: '朱亚文', title: '宋太祖', image: 'images/char02.png' },
+    { id: 3, name: '郭荣', actor: '俞灏明', title: '后周世宗', image: 'images/char03.png' },
+    { id: 4, name: '冯道', actor: '董勇', title: '四朝元老', image: 'images/char04.png' },
+    { id: 5, name: '赵弘殷', actor: '郝平', title: '宋宣祖', image: 'images/char05.png' },
+    { id: 6, name: '郭威', actor: '蒋恺', title: '后周太祖', image: 'images/char06.png' },
+    { id: 7, name: '钱元瓘', actor: '尤勇智', title: '吴越文穆王', image: 'images/char07.png' },
+    { id: 8, name: '刘知远', actor: '于洋', title: '后汉高祖', image: 'images/char08.png' },
+    { id: 9, name: '钱弘佐', actor: '吴昊宸', title: '吴越忠献王', image: 'images/char09.png' },
+    { id: 10, name: '石敬瑭', actor: '海一天', title: '后晋高祖', image: 'images/char10.png' },
+    { id: 11, name: '孙太真', actor: '待补充', title: '钱弘俶妻', image: 'images/char11.png' },
+    { id: 12, name: '李煜', actor: '牛超', title: '南唐后主', image: 'images/char12.png' }
+];
+
+let currentDifficulty = 'normal';
+let gameState = null;
+
+// 设置难度
+function setDifficulty(level) {
+    currentDifficulty = level;
+    document.querySelectorAll('.difficulty-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.level === level);
+    });
+}
+
+// 显示帮助
+function showHelp() {
+    document.getElementById('modalTitle').textContent = '游戏说明';
+    document.getElementById('modalText').textContent = 
+        '1. 点击两个相同的角色进行消除\n' +
+        '2. 连接路径不超过3条直线\n' +
+        '3. 点击已选角色查看详情\n' +
+        '4. 在时间结束前消除所有角色';
+    document.getElementById('modal').classList.add('active');
+}
+
+// 关闭弹窗
+function closeModal() {
+    document.getElementById('modal').classList.remove('active');
+}
+
+// 显示角色图鉴
+function showCharacters() {
+    document.getElementById('homePage').style.display = 'none';
+    document.getElementById('charactersPage').style.display = 'block';
+    renderCharacters();
+}
+
+// 渲染角色列表
+function renderCharacters() {
+    const list = document.getElementById('characterList');
+    list.innerHTML = characters.map(char => `
+        <div class="character-card" onclick="showCharacterDetail(${char.id})">
+            <img src="${char.image}" alt="${char.name}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><rect fill=%22%23ddd%22 width=%22100%22 height=%22100%22/><text x=%2250%22 y=%2255%22 text-anchor=%22middle%22 fill=%22%23999%22>${char.name}</text></svg>'">
+            <div class="character-name">${char.name}</div>
+            <div class="character-title">${char.title}</div>
+        </div>
+    `).join('');
+}
+
+// 显示角色详情
+function showCharacterDetail(id) {
+    const char = characters.find(c => c.id === id);
+    document.getElementById('modalTitle').textContent = char.name;
+    document.getElementById('modalText').innerHTML = 
+        `<strong>${char.title}</strong><br>` +
+        `饰演: ${char.actor}<br>` +
+        `ID: ${char.id}`;
+    document.getElementById('modal').classList.add('active');
+}
+
+// 开始游戏
+function startGame() {
+    document.getElementById('homePage').style.display = 'none';
+    document.getElementById('gamePage').style.display = 'block';
+    initGame();
+}
+
+// 返回首页
+function goHome() {
+    document.getElementById('homePage').style.display = 'block';
+    document.getElementById('gamePage').style.display = 'none';
+    document.getElementById('charactersPage').style.display = 'none';
+}
+
+// 初始化游戏
+function initGame() {
+    const gridSize = currentDifficulty === 'easy' ? 4 : 6;
+    const timeLimit = currentDifficulty === 'easy' ? 60 : currentDifficulty === 'normal' ? 120 : 180;
+    
+    document.getElementById('timeLeft').textContent = timeLimit;
+    document.getElementById('score').textContent = '0';
+    document.getElementById('pairs').textContent = (gridSize * gridSize / 2);
+    
+    const grid = document.getElementById('gameGrid');
+    grid.className = `grid grid-${gridSize}`;
+    
+    // 生成游戏板
+    const cells = [];
+    const pairs = (gridSize * gridSize) / 2;
+    for (let i = 0; i < pairs; i++) {
+        const charId = (i % 12) + 1;
+        cells.push(charId, charId);
+    }
+    
+    // 打乱
+    for (let i = cells.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [cells[i], cells[j]] = [cells[j], cells[i]];
+    }
+    
+    // 渲染
+    grid.innerHTML = cells.map((charId, index) => {
+        const char = characters.find(c => c.id === charId);
+        return `
+            <div class="cell" data-id="${charId}" data-index="${index}" onclick="selectCell(this)">
+                <img src="${char.image}" alt="${char.name}" loading="lazy"
+                    onerror="this.style.display='none'; this.parentElement.textContent='${char.name}';">
+            </div>
+        `;
+    }).join('');
+    
+    gameState = {
+        selected: null,
+        score: 0,
+        timeLeft: timeLimit,
+        pairs: pairs
+    };
+    
+    // 开始倒计时
+    startTimer();
+}
+
+// 选择格子
+function selectCell(cell) {
+    if (cell.classList.contains('matched')) return;
+    
+    if (!gameState.selected) {
+        gameState.selected = cell;
+        cell.classList.add('selected');
+    } else if (gameState.selected === cell) {
+        cell.classList.remove('selected');
+        gameState.selected = null;
+    } else {
+        const prev = gameState.selected;
+        const curr = cell;
+        
+        if (prev.dataset.id === curr.dataset.id) {
+            // 匹配成功
+            prev.classList.add('matched');
+            curr.classList.add('matched');
+            gameState.score += 10;
+            gameState.pairs--;
+            document.getElementById('score').textContent = gameState.score;
+            document.getElementById('pairs').textContent = gameState.pairs;
+            
+            if (gameState.pairs === 0) {
+                setTimeout(() => {
+                    document.getElementById('modalTitle').textContent = '恭喜过关！';
+                    document.getElementById('modalText').textContent = `最终得分: ${gameState.score}`;
+                    document.getElementById('modal').classList.add('active');
+                }, 300);
+            }
+        }
+        
+        prev.classList.remove('selected');
+        gameState.selected = null;
+    }
+}
+
+// 开始计时
+function startTimer() {
+    const timer = setInterval(() => {
+        if (gameState.pairs === 0) {
+            clearInterval(timer);
+            return;
+        }
+        gameState.timeLeft--;
+        document.getElementById('timeLeft').textContent = gameState.timeLeft;
+        if (gameState.timeLeft <= 0) {
+            clearInterval(timer);
+            document.getElementById('modalTitle').textContent = '游戏结束';
+            document.getElementById('modalText').textContent = '时间到！';
+            document.getElementById('modal').classList.add('active');
+        }
+    }, 1000);
+}
+
+// 提示功能
+function useHint() {
+    document.getElementById('modalTitle').textContent = '提示';
+    document.getElementById('modalText').textContent = '找到两个相同的角色并消除！';
+    document.getElementById('modal').classList.add('active');
+}
+
+// 重排功能
+function shuffle() {
+    initGame();
+    document.getElementById('modalTitle').textContent = '重排';
+    document.getElementById('modalText').textContent = '游戏板已重新排列！';
+    document.getElementById('modal').classList.add('active');
+}
+
+// 暂停游戏
+function pauseGame() {
+    document.getElementById('modalTitle').textContent = '暂停';
+    document.getElementById('modalText').textContent = '游戏已暂停';
+    document.getElementById('modal').classList.add('active');
+}
+
+// ========== 自动化测试 ==========
+
+const testResults = [];
+
+function addTest(name, status, message = '') {
+    testResults.push({ name, status, message });
+}
+
+async function runTests() {
+    testResults.length = 0;
+    const resultsEl = document.getElementById('testResults');
+    resultsEl.innerHTML = '<div class="test-item">测试进行中...</div>';
+    
+    // 测试1: 角色数据完整性
+    try {
+        if (characters.length === 12) {
+            addTest('角色数据', 'pass', '12个角色数据完整');
+        } else {
+            addTest('角色数据', 'fail', `角色数量错误: ${characters.length}`);
+        }
+    } catch (e) {
+        addTest('角色数据', 'fail', e.message);
+    }
+    
+    // 测试2: 图片资源检查
+    let loadedImages = 0;
+    await Promise.all(characters.map(char => {
+        return new Promise(resolve => {
+            const img = new Image();
+            img.onload = () => { loadedImages++; resolve(); };
+            img.onerror = () => { resolve(); };
+            img.src = char.image;
+        });
+    }));
+    
+    if (loadedImages === 12) {
+        addTest('图片加载', 'pass', '12张图片都能加载');
+    } else {
+        addTest('图片加载', 'warn', `${loadedImages}/12 张图片可加载`);
+    }
+    
+    // 测试3: 页面切换
+    try {
+        showCharacters();
+        if (document.getElementById('charactersPage').style.display !== 'none') {
+            addTest('页面切换', 'pass', '角色图鉴页面可显示');
+        } else {
+            addTest('页面切换', 'fail', '页面切换失败');
+        }
+        goHome();
+    } catch (e) {
+        addTest('页面切换', 'fail', e.message);
+    }
+    
+    // 测试4: 游戏初始化
+    try {
+        currentDifficulty = 'easy';
+        startGame();
+        if (document.getElementById('gamePage').style.display !== 'none') {
+            addTest('游戏初始化', 'pass', '简单模式可启动');
+        } else {
+            addTest('游戏初始化', 'fail', '游戏启动失败');
+        }
+        goHome();
+    } catch (e) {
+        addTest('游戏初始化', 'fail', e.message);
+    }
+    
+    // 测试5: 难度选择
+    try {
+        setDifficulty('hard');
+        if (currentDifficulty === 'hard') {
+            addTest('难度选择', 'pass', '困难模式可选择');
+        } else {
+            addTest('难度选择', 'fail', '难度选择失败');
+        }
+        setDifficulty('normal');
+    } catch (e) {
+        addTest('难度选择', 'fail', e.message);
+    }
+    
+    // 显示结果
+    resultsEl.innerHTML = testResults.map(r => `
+        <div class="test-item test-${r.status}">
+            ${r.status === 'pass' ? '✓' : r.status === 'fail' ? '✗' : '⚠'} ${r.name}: ${r.message}
+        </div>
+    `).join('');
+    
+    // 总体结果
+    const passCount = testResults.filter(r => r.status === 'pass').length;
+    const failCount = testResults.filter(r => r.status === 'fail').length;
+    
+    resultsEl.innerHTML += `
+        <div style="margin-top: 10px; padding-top: 10px; border-top: 2px solid #eee;">
+            <strong>结果: ${passCount} 通过, ${failCount} 失败</strong>
+        </div>
+    `;
+}
+
+// 页面加载完成后自动测试
+window.onload = () => {
+    setTimeout(runTests, 1000);
+};
+</script>
+</body>
+</html>

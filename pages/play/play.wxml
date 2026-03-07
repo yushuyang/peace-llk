@@ -1,0 +1,41 @@
+<view class="container">
+  <view class="game-header">
+    <view class="score-time">
+      <text class="score">得分: {{score}}</text>
+      <text class="time">时间: {{timeLeft}}s</text>
+    </view>
+    <view class="controls">
+      <button class="control-btn" bindtap="showHint">提示</button>
+      <button class="control-btn" bindtap="shuffleBoard">重排</button>
+      <button class="control-btn" bindtap="togglePause">{{pauseText}}</button>
+    </view>
+  </view>
+  
+  <view class="game-board">
+    <canvas 
+      type="2d" 
+      id="gameCanvas"
+      style="width: {{canvasStyleWidth}}px; height: {{canvasStyleHeight}}px;"
+      bindtap="onCanvasTap"
+    ></canvas>
+  </view>
+  
+  <view class="footer">
+    <button class="back-btn" bindtap="backToHome">返回首页</button>
+  </view>
+  
+  <view class="modal" wx:if="{{showCharacterModal}}">
+    <view class="modal-content">
+      <image class="modal-img" src="{{selectedCharacterImage}}" mode="aspectFit"/>
+      <text class="modal-name">{{selectedCharacterName}}</text>
+      <text class="modal-actor">演员: {{selectedCharacterActor}}</text>
+      <text class="modal-desc">{{selectedCharacterDesc}}</text>
+      <button class="modal-close" bindtap="closeCharacterModal">关闭</button>
+    </view>
+  </view>
+  
+  <view class="pause-overlay" wx:if="{{paused}}">
+    <text class="pause-text">游戏暂停</text>
+    <button class="resume-btn" bindtap="togglePause">继续游戏</button>
+  </view>
+</view>

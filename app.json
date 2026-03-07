@@ -1,0 +1,13 @@
+{
+  "pages": ["pages/index/index", "pages/play/play", "pages/result/result", "pages/characters/characters"],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#FF6B6B",
+    "navigationBarTitleText": "太平年连连看",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#FFF5F5"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

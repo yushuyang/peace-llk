@@ -1,0 +1,10 @@
+<view class="container">
+  <view class="result-card">
+    <text class="result-title">{{resultTitle}}</text>
+    <text class="result-score">最终得分: {{score}}</text>
+    <text class="result-time">用时: {{formattedTime}}</text>
+    <view class="new-record" wx:if="{{isNewRecord}}"><text>新纪录！</text></view>
+    <button class="btn" bindtap="playAgain">再来一局</button>
+    <button class="btn btn-secondary" bindtap="backToMenu">返回菜单</button>
+  </view>
+</view>
