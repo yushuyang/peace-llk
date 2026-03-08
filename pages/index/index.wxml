@@ -1,23 +1,60 @@
 <view class="container">
   <view class="header">
     <text class="title">太平年连连看</text>
-    <text class="subtitle">经典消除游戏</text>
+    <text class="subtitle">总星数: {{totalStars}} / {{maxStars}} ⭐</text>
   </view>
-  <view class="menu-card">
-    <view class="best-score" wx:if="{{hasBestScore}}">
-      <text class="label">最高纪录</text>
-      <text class="value">{{bestScore}}分</text>
-    </view>
-    <button class="btn start-btn" bindtap="startGame">开始游戏</button>
-    <view class="difficulty-selector">
-      <text class="label">难度选择</text>
-      <view class="difficulty-options">
-        <view class="option {{easyActive}}" bindtap="setDifficulty" data-level="easy">简单</view>
-        <view class="option {{normalActive}}" bindtap="setDifficulty" data-level="normal">普通</view>
-        <view class="option {{hardActive}}" bindtap="setDifficulty" data-level="hard">困难</view>
+
+  <!-- 章节选择横条 -->
+  <scroll-view class="chapter-scroll" scroll-x>
+    <view class="chapter-list">
+      <view
+        class="chapter-tab {{item.id === currentChapter ? 'active' : ''}} {{item.completed ? 'completed' : ''}}"
+        wx:for="{{chapters}}"
+        wx:key="id"
+        bindtap="onChapterTap"
+        data-id="{{item.id}}"
+      >
+        <text class="ch-title">{{item.title}}</text>
+        <text class="ch-stars">{{item.stars}}/{{item.maxStars}}★</text>
       </view>
     </view>
-    <button class="btn btn-secondary help-btn" bindtap="showHelp">游戏说明</button>
-    <button class="btn btn-secondary characters-btn" bindtap="showCharacters">角色图鉴</button>
+  </scroll-view>
+
+  <!-- 当前章节标题 + 翻页 -->
+  <view class="chapter-header">
+    <view class="ch-arrow {{currentChapter <= 1 ? 'disabled' : ''}}" bindtap="prevChapter">◀</view>
+    <view class="ch-info">
+      <text class="ch-main-title">{{chapterTitle}}</text>
+      <text class="ch-sub-title">{{chapterSubtitle}}</text>
+    </view>
+    <view class="ch-arrow {{currentChapter >= 10 ? 'disabled' : ''}}" bindtap="nextChapter">▶</view>
   </view>
+
+  <!-- 关卡网格 -->
+  <view class="level-grid">
+    <view
+      class="level-item {{item.unlocked ? '' : 'locked'}}"
+      wx:for="{{levels}}"
+      wx:key="level"
+      bindtap="startLevel"
+      data-level="{{item.level}}"
+      data-unlocked="{{item.unlocked}}"
+    >
+      <view class="level-lock" wx:if="{{!item.unlocked}}">
+        <text class="lock-icon">🔒</text>
+        <text class="lock-num">{{item.level}}</text>
+      </view>
+      <view class="level-content" wx:else>
+        <text class="level-num">{{item.level}}</text>
+        <text class="level-name">{{item.name}}</text>
+        <view class="level-stars">
+          <text class="star {{item.star1 ? 'active' : ''}}">★</text>
+          <text class="star {{item.star2 ? 'active' : ''}}">★</text>
+          <text class="star {{item.star3 ? 'active' : ''}}">★</text>
+        </view>
+        <text class="level-size">{{item.rows}}×{{item.cols}}</text>
+      </view>
+    </view>
+  </view>
+
 </view>

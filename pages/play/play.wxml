@@ -1,12 +1,16 @@
 <view class="container">
   <view class="game-header">
+    <view class="level-info">
+      <text class="level-tag">第{{level}}关</text>
+      <text class="level-label">{{levelName}}</text>
+    </view>
     <view class="score-time">
       <text class="score">得分: {{score}}</text>
       <text class="time">时间: {{timeLeft}}s</text>
     </view>
     <view class="controls">
-      <button class="control-btn" bindtap="showHint">提示</button>
-      <button class="control-btn" bindtap="shuffleBoard">重排</button>
+      <button class="control-btn" bindtap="showHint">提示{{showHintCount ? '(' + hintLeft + ')' : ''}}</button>
+      <button class="control-btn" bindtap="shuffleBoard">重排{{showShuffleCount ? '(' + shuffleLeft + ')' : ''}}</button>
       <button class="control-btn" bindtap="togglePause">{{pauseText}}</button>
     </view>
   </view>

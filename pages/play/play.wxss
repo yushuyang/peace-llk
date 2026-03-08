@@ -20,6 +20,29 @@
   box-sizing: border-box;
 }
 
+.level-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16rpx;
+  margin-bottom: 16rpx;
+}
+
+.level-tag {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-size: 26rpx;
+  font-weight: bold;
+  padding: 6rpx 24rpx;
+  border-radius: 20rpx;
+}
+
+.level-label {
+  font-size: 28rpx;
+  color: #667eea;
+  font-weight: bold;
+}
+
 .score-time {
   display: flex;
   justify-content: space-around;

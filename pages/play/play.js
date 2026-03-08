@@ -1,15 +1,18 @@
 // pages/play/play.js
 import { LinkUpGame } from '../../js/LinkUpGame.js'
 import { getAllCharacters } from '../../js/TaiPingCharacters.js'
+import { getLevelConfig, calculateStars } from '../../js/LevelConfig.js'
 
-const CELL_SIZE = 60
+const BASE_CELL_SIZE = 60
 const CELL_MARGIN = 8
 
 Page({
   data: {
-    difficulty: 'easy',
+    level: 1,
+    levelName: '',
     score: 0,
     timeLeft: 60,
+    totalTime: 60,
     gridRows: 4,
     gridCols: 4,
     selectedRow: -1,
@@ -18,6 +21,10 @@ Page({
     gameOver: false,
     paused: false,
     pauseText: '暂停',
+    hintLeft: -1,
+    shuffleLeft: -1,
+    showHintCount: false,
+    showShuffleCount: false,
     showCharacterModal: false,
     selectedCharacterImage: '',
     selectedCharacterName: '',
@@ -37,35 +44,57 @@ Page({
   _board: null,
   _selected: null,
   _canvasRect: null,
+  _levelConfig: null,
+  _cellSize: BASE_CELL_SIZE,
 
   onLoad(options) {
-    const difficulty = options.difficulty || 'easy'
-    let rows = 4, cols = 4, time = 60
-    
-    if (difficulty === 'normal') { rows = 6; cols = 6; time = 120 }
-    if (difficulty === 'hard') { rows = 8; cols = 8; time = 180 }
-    
-    const canvasWidth = cols * (CELL_SIZE + CELL_MARGIN) + CELL_MARGIN
-    const canvasHeight = rows * (CELL_SIZE + CELL_MARGIN) + CELL_MARGIN
-    
+    const level = parseInt(options.level) || 1
+    const config = getLevelConfig(level)
+
+    if (!config) {
+      wx.showToast({ title: '关卡不存在', icon: 'error' })
+      setTimeout(() => wx.navigateBack(), 1500)
+      return
+    }
+
+    this._levelConfig = config
+    const rows = config.rows
+    const cols = config.cols
+    const time = config.timeLimit
+
+    // 根据棋盘大小动态调整格子尺寸，确保大棋盘适配屏幕
     const sysInfo = wx.getSystemInfoSync()
     const maxWidth = sysInfo.windowWidth - 40
+    const maxHeight = sysInfo.windowHeight - 260  // 预留顶部信息栏和底部按钮
+    const cellByWidth = Math.floor((maxWidth - CELL_MARGIN) / cols - CELL_MARGIN)
+    const cellByHeight = Math.floor((maxHeight - CELL_MARGIN) / rows - CELL_MARGIN)
+    const cellSize = Math.min(BASE_CELL_SIZE, cellByWidth, cellByHeight)
+    this._cellSize = Math.max(cellSize, 28)  // 最小28px保证可点击
+
+    const canvasWidth = cols * (this._cellSize + CELL_MARGIN) + CELL_MARGIN
+    const canvasHeight = rows * (this._cellSize + CELL_MARGIN) + CELL_MARGIN
     const scale = maxWidth / canvasWidth
     const finalScale = scale < 1 ? scale : 1
-    
+
     this.setData({
-      difficulty,
+      level: level,
+      levelName: config.name,
       gridRows: rows,
       gridCols: cols,
       timeLeft: time,
+      totalTime: time,
+      hintLeft: config.hintCount,
+      shuffleLeft: config.shuffleCount,
+      showHintCount: config.hintCount !== -1,
+      showShuffleCount: config.shuffleCount !== -1,
       canvasWidth,
       canvasHeight,
       canvasStyleWidth: Math.floor(canvasWidth * finalScale),
       canvasStyleHeight: Math.floor(canvasHeight * finalScale),
       scale: finalScale
     })
-    
-    this.initGame(rows, cols)
+
+    this.initGame(rows, cols, config.imageCount)
   },
 
   onReady() {
@@ -138,10 +167,10 @@ Page({
     })
   },
 
-  initGame(rows, cols) {
+  initGame(rows, cols, imageCount) {
     this.game = new LinkUpGame(rows, cols)
     const pairCount = Math.floor(rows * cols / 2)
-    this.game.initWithImages(pairCount, 11)
+    this.game.initWithImages(pairCount, imageCount || 11)
     
     // 确保初始棋盘有可消除的配对
     if (!this.game.hasValidPair()) {
@@ -207,8 +236,9 @@ Page({
       const x = offsetX * scaleX
       const y = offsetY * scaleY
       
-      const col = Math.floor((x - CELL_MARGIN / 2) / (CELL_SIZE + CELL_MARGIN))
-      const row = Math.floor((y - CELL_MARGIN / 2) / (CELL_SIZE + CELL_MARGIN))
+      const cs = this._cellSize
+      const col = Math.floor((x - CELL_MARGIN / 2) / (cs + CELL_MARGIN))
+      const row = Math.floor((y - CELL_MARGIN / 2) / (cs + CELL_MARGIN))
       
       this.handleCellClick(row, col)
     }
@@ -305,8 +335,9 @@ Page({
     for (let row = 0; row < this.data.gridRows; row++) {
       for (let col = 0; col < this.data.gridCols; col++) {
         const cell = board[row][col]
-        const x = col * (CELL_SIZE + CELL_MARGIN) + CELL_MARGIN
-        const y = row * (CELL_SIZE + CELL_MARGIN) + CELL_MARGIN
+        const cs = this._cellSize
+        const x = col * (cs + CELL_MARGIN) + CELL_MARGIN
+        const y = row * (cs + CELL_MARGIN) + CELL_MARGIN
         
         if (cell.value > 0) {
           const isSelected = this._selected &&
@@ -315,36 +346,36 @@ Page({
           
           // 绘制背景
           ctx.fillStyle = isSelected ? '#FFD700' : '#FFFFFF'
-          ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE)
+          ctx.fillRect(x, y, cs, cs)
           
           // 绘制选中边框
           if (isSelected) {
             ctx.strokeStyle = '#FF6B6B'
             ctx.lineWidth = 4
-            ctx.strokeRect(x, y, CELL_SIZE, CELL_SIZE)
+            ctx.strokeRect(x, y, cs, cs)
           } else {
             ctx.strokeStyle = '#E0E0E0'
             ctx.lineWidth = 1
-            ctx.strokeRect(x, y, CELL_SIZE, CELL_SIZE)
+            ctx.strokeRect(x, y, cs, cs)
           }
           
           // 绘制图片
           const img = this.loadedImages[cell.value]
           if (img) {
             const padding = 4
-            ctx.drawImage(img, x + padding, y + padding, CELL_SIZE - padding * 2, CELL_SIZE - padding * 2)
+            ctx.drawImage(img, x + padding, y + padding, cs - padding * 2, cs - padding * 2)
           } else {
             // 图片未加载时显示数字
             ctx.fillStyle = '#999'
-            ctx.font = '16px sans-serif'
+            ctx.font = `${Math.max(12, Math.floor(cs * 0.26))}px sans-serif`
             ctx.textAlign = 'center'
             ctx.textBaseline = 'middle'
-            ctx.fillText(cell.value.toString(), x + CELL_SIZE / 2, y + CELL_SIZE / 2)
+            ctx.fillText(cell.value.toString(), x + cs / 2, y + cs / 2)
           }
         } else {
           // 已消除的格子
           ctx.fillStyle = '#E8E8E8'
-          ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE)
+          ctx.fillRect(x, y, cs, cs)
         }
       }
     }
@@ -362,8 +393,9 @@ Page({
     ctx.beginPath()
     
     path.forEach((point, index) => {
-      const x = point.col * (CELL_SIZE + CELL_MARGIN) + CELL_MARGIN + CELL_SIZE / 2
-      const y = point.row * (CELL_SIZE + CELL_MARGIN) + CELL_MARGIN + CELL_SIZE / 2
+      const cs = this._cellSize
+      const x = point.col * (cs + CELL_MARGIN) + CELL_MARGIN + cs / 2
+      const y = point.row * (cs + CELL_MARGIN) + CELL_MARGIN + cs / 2
       
       if (index === 0) {
         ctx.moveTo(x, y)
@@ -378,8 +410,17 @@ Page({
   showHint() {
     if (this.data.gameOver || this.data.paused) return
     
+    if (this.data.showHintCount && this.data.hintLeft === 0) {
+      wx.showToast({ title: '提示次数已用完', icon: 'none' })
+      return
+    }
+    
     const hint = this.game.getHint()
     if (hint) {
+      if (this.data.showHintCount) {
+        this.setData({ hintLeft: this.data.hintLeft - 1 })
+      }
+      
       this._selected = { row: hint.row1, col: hint.col1 }
       this.setData({ selectedRow: hint.row1, selectedCol: hint.col1 })
       this.drawBoard()
@@ -394,6 +435,15 @@ Page({
 
   shuffleBoard() {
     if (this.data.gameOver || this.data.paused) return
+    
+    if (this.data.showShuffleCount && this.data.shuffleLeft === 0) {
+      wx.showToast({ title: '重排次数已用完', icon: 'none' })
+      return
+    }
+    
+    if (this.data.showShuffleCount) {
+      this.setData({ shuffleLeft: this.data.shuffleLeft - 1 })
+    }
     
     this.game.shuffle()
     this._board = this.game.getBoard()
@@ -418,7 +468,18 @@ Page({
     
     this.setData({ gameOver: true })
     
+    const usedTime = this.data.totalTime - this.data.timeLeft
+    const level = this.data.level
+    let stars = 0
+
     if (won) {
+      stars = calculateStars(level, this.data.score)
+      if (stars < 1) stars = 1  // 通关至少1星
+
+      const app = getApp()
+      app.saveLevelResult(level, stars, this.data.score, usedTime)
+
+      // 兼容旧全局最高分
       const bestScore = wx.getStorageSync('bestScore') || 0
       if (this.data.score > bestScore) {
         wx.setStorageSync('bestScore', this.data.score)
@@ -427,7 +488,7 @@ Page({
     
     setTimeout(() => {
       wx.navigateTo({
-        url: `/pages/result/result?won=${won}&score=${this.data.score}&difficulty=${this.data.difficulty}`
+        url: `/pages/result/result?won=${won}&score=${this.data.score}&level=${level}&stars=${stars}&usedTime=${usedTime}`
       })
     }, 500)
   },
