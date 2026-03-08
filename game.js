@@ -1,5 +1,5 @@
 /**
- * 太平年连连看 - 微信小游戏入口
+ * 太真大消除 - 微信小游戏入口
  */
 const { GameManager } = require('./js/GameManager.js')
 

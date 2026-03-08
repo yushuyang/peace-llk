@@ -84,7 +84,7 @@ class MenuScene {
     ctx.font = 'bold 28px sans-serif'
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.fillText('太平年连连看', W / 2, 45)
+    ctx.fillText('太真大消除', W / 2, 45)
     ctx.shadowBlur = 0
 
     // ===== 星数 =====

@@ -1,12 +1,12 @@
 /**
- * 《太平年》角色生成器
+ * 《太真》角色生成器
  * 基于电视剧真实角色创建卡通形象
  */
 import { TAI_PING_CHARACTERS, getCharacterById } from './TaiPingCharacters.js'
 
 class CharacterGenerator {
   constructor() {
-    // 使用《太平年》真实角色数据
+    // 使用《太真》真实角色数据
     this.characters = TAI_PING_CHARACTERS
   }
   

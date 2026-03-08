@@ -1,5 +1,5 @@
 /**
- * 游戏场景 - 连连看游戏主逻辑
+ * 游戏场景 - 消除游戏主逻辑
  */
 const { LinkUpGame } = require('../LinkUpGame.js')
 const { getAllCharacters } = require('../TaiPingCharacters.js')
