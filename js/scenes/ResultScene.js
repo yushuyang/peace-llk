@@ -3,7 +3,7 @@
  */
 import { getLevelConfig, getMaxLevel } from '../LevelConfig.js'
 
-export class ResultScene {
+class ResultScene {
   constructor(gm) {
     this.gm = gm
     this.reset()
@@ -167,3 +167,4 @@ export class ResultScene {
 
   onTouchMove(x, y) {}
 }
+module.exports = { ResultScene }

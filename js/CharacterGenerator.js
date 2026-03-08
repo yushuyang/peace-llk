@@ -4,7 +4,7 @@
  */
 import { TAI_PING_CHARACTERS, getCharacterById } from './TaiPingCharacters.js'
 
-export class CharacterGenerator {
+class CharacterGenerator {
   constructor() {
     // 使用《太平年》真实角色数据
     this.characters = TAI_PING_CHARACTERS

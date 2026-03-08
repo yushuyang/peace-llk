@@ -8,7 +8,7 @@ import { getLevelConfig, calculateStars } from '../LevelConfig.js'
 const BASE_CELL_SIZE = 60
 const CELL_MARGIN = 8
 
-export class GameScene {
+class GameScene {
   constructor(gm) {
     this.gm = gm
     this.reset()
@@ -530,3 +530,4 @@ export class GameScene {
     }, 500)
   }
 }
+module.exports = { GameScene }

@@ -2,7 +2,7 @@
  * 连连看游戏核心逻辑
  * 支持规则：直线、1个拐角、2个拐角（可经过边界外）
  */
-export class LinkUpGame {
+class LinkUpGame {
   constructor(rows, cols) {
     this.rows = rows
     this.cols = cols

@@ -1,12 +1,12 @@
 /**
  * 游戏管理器 - 场景管理、存储、图片加载、绘图工具
  */
-import { MenuScene } from './scenes/MenuScene.js'
-import { GameScene } from './scenes/GameScene.js'
-import { ResultScene } from './scenes/ResultScene.js'
-import { getAllCharacters } from './TaiPingCharacters.js'
+const { MenuScene } = require('./scenes/MenuScene.js')
+const { GameScene } = require('./scenes/GameScene.js')
+const { ResultScene } = require('./scenes/ResultScene.js')
+const { getAllCharacters } = require('./TaiPingCharacters.js')
 
-export class GameManager {
+class GameManager {
   constructor(canvas, ctx, screenWidth, screenHeight) {
     this.canvas = canvas
     this.ctx = ctx
@@ -189,3 +189,5 @@ export class GameManager {
     ctx.lineWidth = 1
   }
 }
+
+module.exports = { GameManager }

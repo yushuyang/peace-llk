@@ -155,35 +155,35 @@ const LEVELS = [
 /**
  * 获取指定关卡配置
  */
-export function getLevelConfig(level) {
+function getLevelConfig(level) {
   return LEVELS.find(l => l.level === level) || null
 }
 
 /**
  * 获取所有关卡配置
  */
-export function getAllLevels() {
+function getAllLevels() {
   return LEVELS
 }
 
 /**
  * 获取总关卡数
  */
-export function getTotalLevels() {
+function getTotalLevels() {
   return LEVELS.length
 }
 
 /**
  * 获取最大关卡编号
  */
-export function getMaxLevel() {
+function getMaxLevel() {
   return LEVELS.length > 0 ? LEVELS[LEVELS.length - 1].level : 0
 }
 
 /**
  * 根据分数计算星级（0-3星）
  */
-export function calculateStars(level, score) {
+function calculateStars(level, score) {
   const config = getLevelConfig(level)
   if (!config) return 0
   const [one, two, three] = config.starScores
@@ -197,7 +197,7 @@ export function calculateStars(level, score) {
  * 判断某关是否已解锁
  * 第1关默认解锁，后续关卡需前一关至少1星
  */
-export function isLevelUnlocked(level, progressData) {
+function isLevelUnlocked(level, progressData) {
   if (level === 1) return true
   const prevLevel = progressData[level - 1]
   return prevLevel && prevLevel.stars > 0

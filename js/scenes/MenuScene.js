@@ -16,7 +16,7 @@ const CHAPTERS = [
   { id: 10, title: '第十章', subtitle: '登峰造极', range: [91, 100] }
 ]
 
-export class MenuScene {
+class MenuScene {
   constructor(gm) {
     this.gm = gm
     this.currentChapter = 1
@@ -234,3 +234,5 @@ export class MenuScene {
 
   onTouchMove(x, y) {}
 }
+
+module.exports = { MenuScene }

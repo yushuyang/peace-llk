@@ -2,7 +2,7 @@
  * 《太平年》角色数据
  * 基于电视剧真实角色，使用外部图片素材
  */
-export const TAI_PING_CHARACTERS = [
+const TAI_PING_CHARACTERS = [
   {
     id: 1,
     name: '钱弘俶',
@@ -96,28 +96,36 @@ export const TAI_PING_CHARACTERS = [
 /**
  * 获取角色总数
  */
-export function getCharacterCount() {
+function getCharacterCount() {
   return TAI_PING_CHARACTERS.length
 }
 
 /**
  * 根据ID获取角色
  */
-export function getCharacterById(id) {
+function getCharacterById(id) {
   return TAI_PING_CHARACTERS.find(c => c.id === id) || TAI_PING_CHARACTERS[0]
 }
 
 /**
  * 获取所有角色
  */
-export function getAllCharacters() {
+function getAllCharacters() {
   return TAI_PING_CHARACTERS
 }
 
 /**
  * 随机获取指定数量的角色（不重复）
  */
-export function getRandomCharacters(count) {
+function getRandomCharacters(count) {
   const shuffled = [...TAI_PING_CHARACTERS].sort(() => Math.random() - 0.5)
   return shuffled.slice(0, Math.min(count, shuffled.length))
+}
+
+module.exports = {
+  TAI_PING_CHARACTERS,
+  getCharacterCount,
+  getCharacterById,
+  getAllCharacters,
+  getRandomCharacters
 }

@@ -1,7 +1,7 @@
 /**
  * 太平年连连看 - 微信小游戏入口
  */
-import { GameManager } from './js/GameManager.js'
+const { GameManager } = require('./js/GameManager.js')
 
 // 创建主画布（第一次调用返回全屏显示画布）
 const canvas = wx.createCanvas()
