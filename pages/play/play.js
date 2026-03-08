@@ -169,7 +169,8 @@ Page({
 
   initGame(rows, cols, imageCount) {
     this.game = new LinkUpGame(rows, cols)
-    const pairCount = Math.floor(rows * cols / 2)
+    const config = this._levelConfig
+    const pairCount = (config && config.pairCount) ? config.pairCount : Math.floor(rows * cols / 2)
     this.game.initWithImages(pairCount, imageCount || 11)
     
     // 确保初始棋盘有可消除的配对

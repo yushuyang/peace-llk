@@ -22,6 +22,7 @@
  * - name: 关卡名称
  * - rows: 行数
  * - cols: 列数
+ * - pairCount: 卡牌对数（可选，省略表示铺满 rows×cols/2 对）
  * - timeLimit: 时间限制（秒）
  * - imageCount: 使用的角色图片种类数（1-11）
  * - hintCount: 可用提示次数（-1表示无限）
@@ -30,16 +31,17 @@
  */
 const LEVELS = [
   // ============ 第1-10关：新手入门 ============
-  { level: 1,  name: '初出茅庐', rows: 2, cols: 4, timeLimit: 120, imageCount: 4,  hintCount: -1, shuffleCount: -1, starScores: [10, 30, 50] },
-  { level: 2,  name: '小试牛刀', rows: 3, cols: 4, timeLimit: 120, imageCount: 6,  hintCount: -1, shuffleCount: -1, starScores: [20, 50, 80] },
-  { level: 3,  name: '崭露头角', rows: 4, cols: 4, timeLimit: 100, imageCount: 8,  hintCount: 5,  shuffleCount: -1, starScores: [30, 70, 110] },
-  { level: 4,  name: '渐入佳境', rows: 4, cols: 4, timeLimit: 80,  imageCount: 8,  hintCount: 5,  shuffleCount: 5,  starScores: [40, 80, 130] },
-  { level: 5,  name: '身经百战', rows: 4, cols: 6, timeLimit: 120, imageCount: 10, hintCount: 4,  shuffleCount: 4,  starScores: [50, 100, 160] },
-  { level: 6,  name: '出类拔萃', rows: 4, cols: 6, timeLimit: 100, imageCount: 11, hintCount: 3,  shuffleCount: 3,  starScores: [60, 120, 190] },
-  { level: 7,  name: '炉火纯青', rows: 6, cols: 6, timeLimit: 150, imageCount: 11, hintCount: 3,  shuffleCount: 3,  starScores: [80, 160, 250] },
-  { level: 8,  name: '登峰造极', rows: 6, cols: 6, timeLimit: 120, imageCount: 11, hintCount: 2,  shuffleCount: 2,  starScores: [100, 200, 300] },
-  { level: 9,  name: '所向披靡', rows: 6, cols: 8, timeLimit: 150, imageCount: 11, hintCount: 2,  shuffleCount: 2,  starScores: [120, 240, 380] },
-  { level: 10, name: '天下无双', rows: 8, cols: 8, timeLimit: 180, imageCount: 11, hintCount: 1,  shuffleCount: 1,  starScores: [150, 300, 480] },
+  // pairCount: 卡牌对数（省略或0表示铺满整个棋盘）
+  { level: 1,  name: '初出茅庐', rows: 4, cols: 6, pairCount: 4,  timeLimit: 120, imageCount: 4,  hintCount: -1, shuffleCount: -1, starScores: [10, 30, 50] },
+  { level: 2,  name: '小试牛刀', rows: 4, cols: 6, pairCount: 6,  timeLimit: 120, imageCount: 6,  hintCount: -1, shuffleCount: -1, starScores: [20, 50, 80] },
+  { level: 3,  name: '崭露头角', rows: 4, cols: 6, pairCount: 8,  timeLimit: 100, imageCount: 8,  hintCount: 5,  shuffleCount: -1, starScores: [30, 70, 110] },
+  { level: 4,  name: '渐入佳境', rows: 4, cols: 6, pairCount: 10, timeLimit: 90,  imageCount: 8,  hintCount: 5,  shuffleCount: 5,  starScores: [40, 80, 130] },
+  { level: 5,  name: '身经百战', rows: 6, cols: 6, pairCount: 12, timeLimit: 120, imageCount: 10, hintCount: 4,  shuffleCount: 4,  starScores: [50, 100, 160] },
+  { level: 6,  name: '出类拔萃', rows: 6, cols: 6, pairCount: 14, timeLimit: 100, imageCount: 11, hintCount: 3,  shuffleCount: 3,  starScores: [60, 120, 190] },
+  { level: 7,  name: '炉火纯青', rows: 6, cols: 6,               timeLimit: 150, imageCount: 11, hintCount: 3,  shuffleCount: 3,  starScores: [80, 160, 250] },
+  { level: 8,  name: '登峰造极', rows: 6, cols: 6,               timeLimit: 120, imageCount: 11, hintCount: 2,  shuffleCount: 2,  starScores: [100, 200, 300] },
+  { level: 9,  name: '所向披靡', rows: 6, cols: 8,               timeLimit: 150, imageCount: 11, hintCount: 2,  shuffleCount: 2,  starScores: [120, 240, 380] },
+  { level: 10, name: '天下无双', rows: 8, cols: 8,               timeLimit: 180, imageCount: 11, hintCount: 1,  shuffleCount: 1,  starScores: [150, 300, 480] },
 
   // ============ 第11-20关：初级挑战 ============
   { level: 11, name: '风起云涌', rows: 4, cols: 4, timeLimit: 70,  imageCount: 8,  hintCount: 4,  shuffleCount: 4,  starScores: [40, 90, 140] },

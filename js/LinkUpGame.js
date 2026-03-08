@@ -24,6 +24,8 @@ export class LinkUpGame {
    */
   initWithImages(pairCount, maxImageCount) {
     this.totalPairs = pairCount
+    const totalCells = this.rows * this.cols
+    const cardCount = pairCount * 2
     const cards = []
     
     // 循环分配图片ID，确保每种图片都成对出现
@@ -38,14 +40,41 @@ export class LinkUpGame {
       [cards[i], cards[j]] = [cards[j], cards[i]]
     }
     
-    // 填充游戏板
+    // 先初始化整个棋盘为空
     this.board = []
-    let cardIndex = 0
     for (let row = 0; row < this.rows; row++) {
       this.board[row] = []
       for (let col = 0; col < this.cols; col++) {
-        this.board[row][col] = { value: cards[cardIndex], row, col }
-        cardIndex++
+        this.board[row][col] = { value: 0, row, col }
+      }
+    }
+    
+    if (cardCount >= totalCells) {
+      // 满铺模式：卡牌填满所有格子
+      let cardIndex = 0
+      for (let row = 0; row < this.rows; row++) {
+        for (let col = 0; col < this.cols; col++) {
+          this.board[row][col].value = cards[cardIndex]
+          cardIndex++
+        }
+      }
+    } else {
+      // 稀疏模式：随机选择位置放置卡牌，其余留空
+      const allPositions = []
+      for (let row = 0; row < this.rows; row++) {
+        for (let col = 0; col < this.cols; col++) {
+          allPositions.push({ row, col })
+        }
+      }
+      // 打乱位置
+      for (let i = allPositions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [allPositions[i], allPositions[j]] = [allPositions[j], allPositions[i]]
+      }
+      // 取前 cardCount 个位置放卡牌
+      for (let i = 0; i < cardCount; i++) {
+        const pos = allPositions[i]
+        this.board[pos.row][pos.col].value = cards[i]
       }
     }
   }
