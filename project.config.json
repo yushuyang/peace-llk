@@ -11,22 +11,6 @@
         "type": "folder"
       },
       {
-        "value": "test.html",
-        "type": "file"
-      },
-      {
-        "value": "模拟测试.html",
-        "type": "file"
-      },
-      {
-        "value": "规则说明.html",
-        "type": "file"
-      },
-      {
-        "value": "*.sh",
-        "type": "file"
-      },
-      {
         "value": "*.md",
         "type": "file"
       }
@@ -44,11 +28,11 @@
     "compileHotReLoad": false,
     "lazyloadPlaceholderEnable": false,
     "preloadBackgroundData": false,
-    "minified": false,
+    "minified": true,
     "autoAudits": false,
     "newFeature": false,
     "uglifyFileName": false,
-    "uploadWithSourceMap": true,
+    "uploadWithSourceMap": false,
     "useIsolateContext": true,
     "nodeModules": false,
     "enhance": true,
@@ -66,7 +50,7 @@
     "useCompilerPlugins": false,
     "compileWorklet": false,
     "localPlugins": false,
-    "condition": true,
+    "condition": false,
     "swc": false,
     "disableSWC": true,
     "babelSetting": {
@@ -77,16 +61,10 @@
   },
   "compileType": "minigame",
   "libVersion": "3.14.2",
-  "appid": "wx09df750c93b7ee9e",
+  "appid": "YOUR_APPID_HERE",
   "projectname": "peace-llk",
-  "condition": {
-    "game": {
-      "list": []
-    }
-  },
   "editorSetting": {
     "tabIndent": "insertSpaces",
     "tabSize": 2
-  },
-  "simulatorPluginLibVersion": {}
+  }
 }
