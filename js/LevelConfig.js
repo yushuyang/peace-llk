@@ -202,3 +202,12 @@ function isLevelUnlocked(level, progressData) {
   const prevLevel = progressData[level - 1]
   return prevLevel && prevLevel.stars > 0
 }
+
+module.exports = {
+  getLevelConfig,
+  getAllLevels,
+  getTotalLevels,
+  getMaxLevel,
+  calculateStars,
+  isLevelUnlocked
+}

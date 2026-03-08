@@ -1,7 +1,7 @@
 /**
  * 菜单场景 - 关卡选择
  */
-import { getAllLevels, isLevelUnlocked } from '../LevelConfig.js'
+const { getAllLevels, isLevelUnlocked } = require('../LevelConfig.js')
 
 const CHAPTERS = [
   { id: 1, title: '第一章', subtitle: '新手入门',   range: [1, 10] },

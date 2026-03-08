@@ -354,3 +354,5 @@ class LinkUpGame {
     return this.getHint() !== null
   }
 }
+
+module.exports = { LinkUpGame }

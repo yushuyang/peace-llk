@@ -1,9 +1,9 @@
 /**
  * 游戏场景 - 连连看游戏主逻辑
  */
-import { LinkUpGame } from '../LinkUpGame.js'
-import { getAllCharacters } from '../TaiPingCharacters.js'
-import { getLevelConfig, calculateStars } from '../LevelConfig.js'
+const { LinkUpGame } = require('../LinkUpGame.js')
+const { getAllCharacters } = require('../TaiPingCharacters.js')
+const { getLevelConfig, calculateStars } = require('../LevelConfig.js')
 
 const BASE_CELL_SIZE = 60
 const CELL_MARGIN = 8

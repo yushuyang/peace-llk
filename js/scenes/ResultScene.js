@@ -1,7 +1,7 @@
 /**
  * 结果场景 - 显示关卡通关/失败结果
  */
-import { getLevelConfig, getMaxLevel } from '../LevelConfig.js'
+const { getLevelConfig, getMaxLevel } = require('../LevelConfig.js')
 
 class ResultScene {
   constructor(gm) {
